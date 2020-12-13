@@ -4,19 +4,24 @@ import java.util.HashMap;
 
 public class MinHeap {
 
-	private static void swap(ArrayList<Integer> inputList, int pos1, int pos2){
-		Integer temp = inputList.get(pos1);
-		inputList.set(pos1, inputList.get(pos2));
-		inputList.set(pos2, temp);
+	// min heapify the give ArrayList
+	public static void minHeapifyList(ArrayList<Integer> inputList) {
+		System.out.println("Original list was " +inputList);
+		if(inputList.contains(null)){
+			throw new Error("Array cannot contain null");
+		}else{
+			int listSize = inputList.size();
+			privateMinHeapifyList(inputList, listSize);
+			System.out.println("After heapifying, the list is " +inputList);
+		}
 	}
 
-	private static void privateHeapifyList(ArrayList<Integer> inputList){
-		int n = inputList.size();
+	private static void privateMinHeapifyList(ArrayList<Integer> inputList, int listSize){
 		// key point is start position is floor of size /2
-		int startPos = n/2;
+		int startPos = listSize/2;
 
 		for(int i = startPos; i >=0; i--){
-			if(i*2+2 < n && (inputList.get(i) > inputList.get(i*2+1) || inputList.get(i) > inputList.get(i*2+2))){
+			if(i*2+2 < listSize && (inputList.get(i) > inputList.get(i*2+1) || inputList.get(i) > inputList.get(i*2+2))){
 
 				Integer diff = inputList.get(i*2+1) - inputList.get(i*2+2);
 				if(diff > 0){
@@ -24,41 +29,80 @@ public class MinHeap {
 				}else{
 					swap(inputList, i, i*2+1);
 				}
-			}else if(i*2+2 >=n && i*2+1 < n && inputList.get(i) > inputList.get(i*2+1)){
+			}else if(i*2+2 >=listSize && i*2+1 < listSize && inputList.get(i) > inputList.get(i*2+1)){
 				swap(inputList, i, i*2+1);
 			}
 		}
-		if(isHeapified(inputList)) return;
-		privateHeapifyList(inputList);
+		if(isMinHeapified(inputList, listSize)) return;
+		privateMinHeapifyList(inputList, listSize);
 	}
 
-	private static boolean isHeapified(ArrayList<Integer> inputList){
-		int n = inputList.size();
-		int startPos = n/2;
+	private static boolean isMinHeapified(ArrayList<Integer> inputList, int listSize){
+		int startPos = listSize/2;
 
 		for(int i = startPos; i >=0; i--){
 			// one child
-			if(i*2+2 >=n && i*2+1 <n && inputList.get(i) > inputList.get(i*2+1)) return false;
+			if(i*2+2 >=listSize && i*2+1 <listSize && inputList.get(i) > inputList.get(i*2+1)) return false;
 			// two children
-			if(i*2+2 < n && (inputList.get(i) > inputList.get(i*2+1) || inputList.get(i) > inputList.get(i*2+2))) return false;
+			if(i*2+2 < listSize && (inputList.get(i) > inputList.get(i*2+1) || inputList.get(i) > inputList.get(i*2+2))) return false;
 		}
 		return true;
 	}
+	
+	
 
-	public static void HeapifyList(ArrayList<Integer> inputList) {
+
+	// max heapify the give ArrayList
+	public static void maxHeapifyList(ArrayList<Integer> inputList) {
 		System.out.println("Original list was " +inputList);
 		if(inputList.contains(null)){
 			throw new Error("Array cannot contain null");
 		}else{
-			privateHeapifyList(inputList);
+			int listSize = inputList.size();
+			privateMaxHeapifyList(inputList, listSize);
 			System.out.println("After heapifying, the list is " +inputList);
 		}
 	}
+
+	private static void privateMaxHeapifyList(ArrayList<Integer> inputList, int listSize){
+		// key point is start position is floor of size /2
+		int startPos = listSize/2;
+
+		for(int i = startPos; i >=0; i--){
+			if(i*2+2 < listSize && (inputList.get(i) < inputList.get(i*2+1) || inputList.get(i) < inputList.get(i*2+2))){
+
+				Integer diff = inputList.get(i*2+1) - inputList.get(i*2+2);
+				if(diff >= 0){
+					swap(inputList, i, i*2+1);
+				}else{
+					swap(inputList, i, i*2+2);
+				}
+			}else if(i*2+2 >=listSize && i*2+1 < listSize && inputList.get(i) < inputList.get(i*2+1)){
+				swap(inputList, i, i*2+1);
+			}
+		}
+		if(isMaxHeapified(inputList, listSize)) return;
+		privateMaxHeapifyList(inputList, listSize);
+	}
+
+	private static boolean isMaxHeapified(ArrayList<Integer> inputList, int listSize){
+		int startPos = listSize/2;
+
+		for(int i = startPos; i >=0; i--){
+			// one child
+			if(i*2+2 >=listSize && i*2+1 <listSize && inputList.get(i) < inputList.get(i*2+1)) return false;
+			// two children
+			if(i*2+2 < listSize && (inputList.get(i) < inputList.get(i*2+1) || inputList.get(i) < inputList.get(i*2+2))) return false;
+		}
+		return true;
+	}
+
 	
 	private ArrayList<Integer> minHeap;
 	private int size;
 	private HashMap<Integer, Integer> cacheMap; 
 
+	// constructure
 	public MinHeap(){
 		minHeap = new ArrayList<Integer>();
 		size =0;
@@ -197,8 +241,33 @@ public class MinHeap {
 		return false;
 	}
 
+	public static void heapSort(ArrayList<Integer> inputList){
+		if(inputList.size() == 0){
+			throw new Error("List cannot be empty");
+		}
+		privateHeapSort(inputList);
+		System.out.println(inputList);
+	}
+
+	private static void privateHeapSort(ArrayList<Integer> inputList){
+		int listSize = inputList.size();
+		if(listSize == 1) return;
+
+		while(listSize > 1){
+			privateMaxHeapifyList(inputList, listSize);
+			swap(inputList, 0, listSize-1);
+			listSize--;
+		}
+	}
+
 
 	
+	private static void swap(ArrayList<Integer> inputList, int pos1, int pos2){
+		Integer temp = inputList.get(pos1);
+		inputList.set(pos1, inputList.get(pos2));
+		inputList.set(pos2, temp);
+	}
+
 	public void display(){
 		System.out.println("The minHeap is " + minHeap);
 		// System.out.println("cache map is " + cacheMap);
